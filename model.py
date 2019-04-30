@@ -3,6 +3,7 @@ from    torch import nn
 from    torch.nn import functional as F
 from    layer import GraphConvolution
 
+from    config import args
 
 class GCN(nn.Module):
 
@@ -18,14 +19,14 @@ class GCN(nn.Module):
         print('num_features_nonzero:', num_features_nonzero)
 
 
-        self.layers = nn.Sequential(GraphConvolution(self.input_dim, 16, num_features_nonzero,
+        self.layers = nn.Sequential(GraphConvolution(self.input_dim, args.hidden, num_features_nonzero,
                                                      activation=F.relu,
-                                                     dropout=0.5,
+                                                     dropout=args.dropout,
                                                      is_sparse_inputs=True),
 
-                                    GraphConvolution(16, 7, num_features_nonzero,
+                                    GraphConvolution(args.hidden, output_dim, num_features_nonzero,
                                                      activation=F.relu,
-                                                     dropout=0.5,
+                                                     dropout=args.dropout,
                                                      is_sparse_inputs=False),
 
                                     )

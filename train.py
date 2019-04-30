@@ -22,17 +22,13 @@ print('features:', features.shape)
 print('y:', y_train.shape, y_val.shape, y_test.shape)
 print('mask:', train_mask.shape, val_mask.shape, test_mask.shape)
 
-
-
 # D^-1@X
 features = preprocess_features(features) # [49216, 2], [49216], [2708, 1433]
-print('features coordinates::', features[0].shape)
-print('features data::', features[1].shape)
-print('features shape::', features[2])
 supports = preprocess_adj(adj)
 
 device = torch.device('cuda')
 train_label = torch.from_numpy(y_train).long().to(device)
+num_classes = train_label.shape[1]
 train_label = train_label.argmax(dim=1)
 train_mask = torch.from_numpy(train_mask.astype(np.int)).to(device)
 val_label = torch.from_numpy(y_val).long().to(device)
@@ -50,14 +46,15 @@ i = torch.from_numpy(supports[0]).long().to(device)
 v = torch.from_numpy(supports[1]).to(device)
 support = torch.sparse.FloatTensor(i.t(), v, supports[2]).float().to(device)
 
-print(feature)
-print(support)
+print('x :', feature)
+print('sp:', support)
 num_features_nonzero = feature._nnz()
-dropout = args.dropout
+feat_dim = feature.shape[1]
 
-net = GCN(1433, 7, num_features_nonzero)
+
+net = GCN(feat_dim, num_classes, num_features_nonzero)
 net.to(device)
-optimizer = optim.Adam(net.parameters(), lr=1e-2)
+optimizer = optim.Adam(net.parameters(), lr=args.learning_rate)
 
 net.train()
 for epoch in range(args.epochs):
