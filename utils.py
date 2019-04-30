@@ -37,13 +37,16 @@ def sparse_dropout(x, rate, noise_shape):
     """
     random_tensor = 1 - rate
     random_tensor += torch.rand(noise_shape).to(x.device)
-    dropout_mask = torch.floor(random_tensor)
-    i = x._indices()
-    v = x._values()
-    i = i * dropout_mask.long()
-    v = v * dropout_mask
+    dropout_mask = torch.floor(random_tensor).byte()
+    i = x._indices() # [2, 49216]
+    v = x._values() # [49216]
+
+    # [2, 4926] => [49216, 2] => [remained node, 2] => [2, remained node]
+    i = i[:, dropout_mask]
+    v = v[dropout_mask]
 
     out = torch.sparse.FloatTensor(i, v, x.shape).to(x.device)
+
     out = out * (1./ (1-rate))
 
     return out
