@@ -12,7 +12,7 @@ GCN implementation for paper: [Semi-Supervised Classification with Graph Convolu
 | This repo.    |          | 81.7 |   78.7  |      |
 
 Hints:
-To achieve 87.7% on `Cora` dataset, pytorch need 400 epochs.
+To achieve 81.7% on `Cora` dataset, pytorch need 400 epochs.
 and it train relatively slower on `Pubmed` dataset.
 
 
